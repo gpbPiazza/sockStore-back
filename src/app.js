@@ -4,13 +4,14 @@ const cors = require('cors');
 
 require('./utils/loadRelationships');
 
+const adminRouter = require('./routers/adminRouter');
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.status(200).send('Hello World');
-});
+// Admin
+app.use('/admin', adminRouter);
 
 module.exports = app;
