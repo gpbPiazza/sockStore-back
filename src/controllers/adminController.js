@@ -1,8 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 const { v4: uuidv4 } = require('uuid');
 const dotenv = require('dotenv');
 const Unauthorized = require('../errors/Unauthorized');
 
 dotenv.config();
+let token;
 
 function login({ email, password }) {
   const validEmail = process.env.ADMIN_EMAIL;
@@ -10,8 +12,11 @@ function login({ email, password }) {
 
   if (validEmail !== email || validPassword !== password) throw new Unauthorized();
 
-  const token = uuidv4();
+  token = uuidv4();
   return { token };
 }
+function getToken() {
+  return token;
+}
 
-module.exports = { login };
+module.exports = { login, getToken };
