@@ -1,14 +1,27 @@
 const NotFoundError = require('../errors/NotFoundError');
-const Categorie = require('../models/Categorie');
+const Category = require('../models/Category');
 const Photo = require('../models/Photo');
 const Product = require('../models/Product');
 
 async function getProductInformations(id) {
-  const product = Product.findOne({
+  const product = await Product.findOne({
     where: {
       id,
     },
-    include: [Categorie, Photo],
+    include: [
+      {
+        model: Category,
+        attributes: ['id', 'name'],
+        through: {
+          attributes: [],
+        },
+      },
+      {
+        model: Photo,
+        attributes: ['id', 'photo'],
+      },
+    ],
+    attributes: ['id', 'name', 'price', 'size', 'description', 'stock'],
   });
 
   if (!product) throw new NotFoundError();

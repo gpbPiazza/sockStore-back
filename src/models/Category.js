@@ -1,9 +1,9 @@
 const { Sequelize } = require('sequelize');
 const sequelize = require('../utils/database');
 
-class Photo extends Sequelize.Model {}
+class Category extends Sequelize.Model {}
 
-Photo.init(
+Category.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -11,17 +11,9 @@ Photo.init(
       allowNull: false,
       primaryKey: true,
     },
-    photo: {
+    name: {
       type: Sequelize.STRING(255),
       allowNull: false,
-    },
-    productId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'products',
-        key: 'id',
-      },
     },
     createdAt: {
       type: Sequelize.DATE,
@@ -32,8 +24,8 @@ Photo.init(
   },
   {
     sequelize,
-    modelName: 'photo',
+    modelName: 'category',
   },
 );
 
-module.exports = Photo;
+module.exports = Category;
