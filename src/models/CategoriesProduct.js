@@ -37,6 +37,7 @@ CategoriesProduct.init(
   {
     sequelize,
     modelName: 'categoriesProduct',
+    onDelete: 'cascade',
   },
 );
 

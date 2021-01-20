@@ -33,6 +33,7 @@ Photo.init(
   {
     sequelize,
     modelName: 'photo',
+    onDelete: 'cascade',
   },
 );
 
