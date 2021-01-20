@@ -17,7 +17,7 @@ router.post('/login', (req, res) => {
     return res.status(201).send(adminValid);
   } catch (e) {
     if (e instanceof Unauthorized) return res.status(401).send({ error: 'Email ou senha incorretos' });
-    return res.status(500).send({ error: 'call someone' });
+    return res.status(500).send({ error: 'call the responsible person' });
   }
 });
 
