@@ -6,6 +6,7 @@ const categoriesSchemas = require('../schemas/categoriesSchemas');
 const authAdminMiddleware = require('../middlewares/authenticationAdmin');
 const cateogiresController = require('../controllers/cateogiresController');
 const ConflictError = require('../errors/ConflictError');
+const NotFoundError = require('../errors/NotFoundError');
 
 router.post('/', authAdminMiddleware, async (req, res) => {
   const categoryParams = req.body;
@@ -29,6 +30,18 @@ router.get('/', authAdminMiddleware, async (req, res) => {
     return res.status(200).send(categories);
   } catch (e) {
     console.log(e);
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
+router.delete('/:id', authAdminMiddleware, async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+    await cateogiresController.deleteCategory(categoryId);
+    return res.sendStatus(200);
+  } catch (e) {
+    console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'category not found' });
     return res.status(500).send({ error: 'call the responsible person' });
   }
 });
