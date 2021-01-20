@@ -36,8 +36,6 @@ async function createProduct(params) {
   const product = await Product.create({
     name, price, size, description, stock,
   });
-
-  
 }
 
 module.exports = {
