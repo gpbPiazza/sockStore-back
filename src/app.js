@@ -6,6 +6,7 @@ require('./utils/loadRelationships');
 
 const adminRouter = require('./routers/adminRouter');
 const categoriesRouter = require('./routers/categoriesRouter');
+const productsRouter = require('./routers/productsRouter');
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use('/admin', adminRouter);
 // Categories
 app.use('/categories', categoriesRouter);
 
-// Products
-// app.use('/products', )
+//Products
+app.use('/products', productsRouter);
 
 module.exports = app;
