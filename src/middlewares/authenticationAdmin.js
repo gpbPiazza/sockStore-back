@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const adminController = require('../controllers/adminController');
 
 function authAdminMiddleware(req, res, next) {

@@ -18,6 +18,7 @@ async function deleteCategory(categoryId) {
   const category = await Category.findByPk(categoryId);
   if (!category) throw new NotFoundError();
   await category.destroy();
+  return category;
 }
 
 function count() {

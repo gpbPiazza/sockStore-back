@@ -62,13 +62,13 @@ router.get('/categories', authAdminMiddleware, async (req, res) => {
 router.delete('/categories/:id', authAdminMiddleware, async (req, res) => {
   try {
     const categoryId = req.params.id;
-    await categoriesController.deleteCategory(categoryId);
+    const category = await categoriesController.deleteCategory(categoryId);
     const total = await categoriesController.count();
 
     res
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
       .set('X-Total-Count', total)
-      .sendStatus(200);
+      .status(200).send(category);
   } catch (e) {
     if (e instanceof NotFoundError) return res.status(404).send({ error: 'category not found' });
     return res.status(500).send({ error: 'call the responsible person' });
