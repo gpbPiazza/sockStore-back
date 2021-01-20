@@ -142,4 +142,22 @@ router.post('/products', authAdminMiddleware, async (req, res) => {
   }
 });
 
+router.get('/products', authAdminMiddleware, async (req, res) => {
+  const { offset, limit } = req.query;
+
+  try {
+    const products = await productsController.getAllProducts(offset, limit);
+    const total = await productsController.count();
+    return res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(201)
+      .send(products);
+  } catch (e) {
+    console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'Categories not found' });
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
 module.exports = router;

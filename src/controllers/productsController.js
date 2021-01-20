@@ -58,6 +58,25 @@ async function createProduct(params) {
   };
 }
 
+function getAllProducts(offset, limit) {
+  return Product.findAll({
+    include: [{
+      model: Category,
+      attributes: ['id', 'name'],
+      through: {
+        model: CategoriesProduct,
+        attributes: [],
+      },
+    },
+    {
+      model: Photo,
+      attributes: ['id', 'photo'],
+    }],
+    offset,
+    limit,
+  });
+}
+
 async function count() {
   return Product.count();
 }
@@ -66,4 +85,5 @@ module.exports = {
   getProductInformations,
   createProduct,
   count,
+  getAllProducts,
 };
