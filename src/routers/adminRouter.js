@@ -26,6 +26,11 @@ router.post('/login', (req, res) => {
   }
 });
 
+router.post('/logout', authAdminMiddleware, (req, res) => {
+  adminController.logout();
+  return res.sendStatus(200);
+});
+
 router.post('/categories', authAdminMiddleware, async (req, res) => {
   const categoryParams = req.body;
 
@@ -50,7 +55,7 @@ router.get('/categories', authAdminMiddleware, async (req, res) => {
   try {
     const categories = await categoriesController.getAll();
     const total = await categoriesController.count();
-    res
+    return res
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
       .set('X-Total-Count', total)
       .status(200).send(categories);
@@ -65,7 +70,7 @@ router.delete('/categories/:id', authAdminMiddleware, async (req, res) => {
     const category = await categoriesController.deleteCategory(categoryId);
     const total = await categoriesController.count();
 
-    res
+    return res
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
       .set('X-Total-Count', total)
       .status(200).send(category);
