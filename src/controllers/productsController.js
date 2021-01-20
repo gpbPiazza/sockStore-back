@@ -29,6 +29,15 @@ async function getProductInformations(id) {
   return product;
 }
 
+async function createProduct(params) {
+  const {
+    name, price, size, description, stock, categoriesId, photos,
+  } = params;
+  const product = await Product.create({
+    name, price, size, description, stock,
+  });
+}
+
 module.exports = {
   getProductInformations,
 };
