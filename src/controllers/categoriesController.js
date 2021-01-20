@@ -21,6 +21,12 @@ async function deleteCategory(categoryId) {
   return category;
 }
 
+async function findCategoryById(categoryId) {
+  const category = await Category.findByPk(categoryId);
+  if (!category) throw new NotFoundError();
+  return category;
+}
+
 async function updateCategory({ categoryId, name }) {
   const category = await Category.findByPk(categoryId);
   if (!category) throw new NotFoundError();
@@ -39,4 +45,5 @@ module.exports = {
   deleteCategory,
   count,
   updateCategory,
+  findCategoryById,
 };
