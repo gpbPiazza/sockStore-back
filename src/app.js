@@ -19,7 +19,7 @@ app.use('/admin', adminRouter);
 // Categories
 app.use('/categories', categoriesRouter);
 
-//Products
+// Products
 app.use('/products', productsRouter);
 
 module.exports = app;
