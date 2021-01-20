@@ -15,8 +15,13 @@ function login({ email, password }) {
   token = uuidv4();
   return { token };
 }
+
+function logout() {
+  token = '';
+}
+
 function getToken() {
   return token;
 }
 
-module.exports = { login, getToken };
+module.exports = { login, getToken, logout };
