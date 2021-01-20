@@ -5,6 +5,7 @@ const cors = require('cors');
 require('./utils/loadRelationships');
 
 const adminRouter = require('./routers/adminRouter');
+const categoriesRouter = require('./routers/categoriesRouter');
 
 const app = express();
 
@@ -14,7 +15,10 @@ app.use(express.json());
 // Admin
 app.use('/admin', adminRouter);
 
-//Products
-//app.use('/products', )
+// Categories
+app.use('/categories', categoriesRouter);
+
+// Products
+// app.use('/products', )
 
 module.exports = app;
