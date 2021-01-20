@@ -34,7 +34,7 @@ router.post('/logout', authAdminMiddleware, (req, res) => {
 router.post('/categories', authAdminMiddleware, async (req, res) => {
   const categoryParams = req.body;
 
-  const { error } = categoriesSchemas.create.validate(categoryParams);
+  const { error } = categoriesSchemas.name.validate(categoryParams);
   if (error) return res.status(422).send({ error: error.detail[0].message });
 
   try {
@@ -68,6 +68,28 @@ router.delete('/categories/:id', authAdminMiddleware, async (req, res) => {
   try {
     const categoryId = req.params.id;
     const category = await categoriesController.deleteCategory(categoryId);
+    const total = await categoriesController.count();
+
+    return res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(200).send(category);
+  } catch (e) {
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'category not found' });
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
+router.put('/categories/:id', authAdminMiddleware, async (req, res) => {
+  const categoryParams = req.body;
+  const { name } = categoryParams;
+
+  const { error } = categoriesSchemas.name.validate(categoryParams);
+  if (error) return res.status(422).send({ error: error.detail[0].message });
+
+  try {
+    const categoryId = req.params.id;
+    const category = await categoriesController.updateCategory({ categoryId, name });
     const total = await categoriesController.count();
 
     return res
