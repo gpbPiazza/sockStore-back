@@ -9,7 +9,6 @@ function authAdminMiddleware(req, res, next) {
   if (requestToken !== adminController.getToken()) return res.status(401).send({ error: 'Invalid token' });
 
   next();
-  return 'zape';
 }
 
 module.exports = authAdminMiddleware;
