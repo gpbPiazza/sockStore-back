@@ -14,4 +14,7 @@ app.use(express.json());
 // Admin
 app.use('/admin', adminRouter);
 
+//Products
+//app.use('/products', )
+
 module.exports = app;
