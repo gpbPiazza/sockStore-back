@@ -9,6 +9,11 @@ async function create({ name }) {
   return { id: category.id, name: category.name };
 }
 
+function getAll() {
+  return Category.findAll({ attributes: ['id', 'name'] });
+}
+
 module.exports = {
   create,
+  getAll,
 };

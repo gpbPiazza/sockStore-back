@@ -23,4 +23,14 @@ router.post('/', authAdminMiddleware, async (req, res) => {
   }
 });
 
+router.get('/', authAdminMiddleware, async (req, res) => {
+  try {
+    const categories = await cateogiresController.getAll();
+    return res.status(200).send(categories);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
 module.exports = router;
