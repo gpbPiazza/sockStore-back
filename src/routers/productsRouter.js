@@ -12,10 +12,9 @@ router.get('/:id', async (req, res) => {
     return res.send(product);
   } catch (err) {
     if (err instanceof NotFoundError) {
-      res.status(404).send({ error: 'Produto não encontrado!' });
-    } else {
-      res.status(500).send({ error: 'call someone' });
+      return res.status(404).send({ error: 'Produto não encontrado!' });
     }
+    return res.status(500).send({ error: 'call someone' });
   }
 });
 
