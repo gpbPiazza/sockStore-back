@@ -54,8 +54,10 @@ router.post('/categories', authAdminMiddleware, async (req, res) => {
 });
 
 router.get('/categories', authAdminMiddleware, async (req, res) => {
+  const { offset, limit } = req.query;
+
   try {
-    const categories = await categoriesController.getAll();
+    const categories = await categoriesController.getAll(offset, limit);
     const total = await categoriesController.count();
     return res
       .header('Access-Control-Expose-Headers', 'X-Total-Count')

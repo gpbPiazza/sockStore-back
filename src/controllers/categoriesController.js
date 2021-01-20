@@ -10,8 +10,8 @@ async function create({ name }) {
   return { id: category.id, name: category.name };
 }
 
-function getAll() {
-  return Category.findAll({ attributes: ['id', 'name'] });
+function getAll(offset, limit) {
+  return Category.findAll({ attributes: ['id', 'name'], offset, limit });
 }
 
 async function deleteCategory(categoryId) {
