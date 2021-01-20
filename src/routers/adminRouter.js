@@ -34,7 +34,12 @@ router.post('/categories', authAdminMiddleware, async (req, res) => {
 
   try {
     const category = await categoriesController.create(categoryParams);
-    return res.status(201).send(category);
+    const total = await categoriesController.count();
+    res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(201)
+      .send(category);
   } catch (e) {
     if (e instanceof ConflictError) return res.status(409).send({ error: 'This category name its already exists' });
     return res.status(500).send({ error: 'call the responsible person' });
@@ -44,7 +49,11 @@ router.post('/categories', authAdminMiddleware, async (req, res) => {
 router.get('/categories', authAdminMiddleware, async (req, res) => {
   try {
     const categories = await categoriesController.getAll();
-    return res.status(200).send(categories);
+    const total = await categoriesController.count();
+    res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(200).send(categories);
   } catch (e) {
     return res.status(500).send({ error: 'call the responsible person' });
   }
@@ -54,7 +63,12 @@ router.delete('/categories/:id', authAdminMiddleware, async (req, res) => {
   try {
     const categoryId = req.params.id;
     await categoriesController.deleteCategory(categoryId);
-    return res.sendStatus(200);
+    const total = await categoriesController.count();
+
+    res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .sendStatus(200);
   } catch (e) {
     if (e instanceof NotFoundError) return res.status(404).send({ error: 'category not found' });
     return res.status(500).send({ error: 'call the responsible person' });

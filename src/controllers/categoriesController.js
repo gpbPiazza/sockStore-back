@@ -20,8 +20,13 @@ async function deleteCategory(categoryId) {
   await category.destroy();
 }
 
+function count() {
+  return Category.count();
+}
+
 module.exports = {
   create,
   getAll,
   deleteCategory,
+  count,
 };
