@@ -2,7 +2,7 @@ const joi = require('joi');
 
 const create = joi.object({
   name: joi.string().min(2).max(50).required(),
-  price: joi.number().required(),
+  price: joi.string().pattern(/^[0-9]+(,[0-9]{1,2})?$/, 'Price format 12,00').required(),
   size: joi.string().min(1).max(2).required(),
   description: joi.string().min(5).required(),
   stock: joi.number().integer().positive().required(),
@@ -10,4 +10,14 @@ const create = joi.object({
   photos: joi.array().items(joi.string().uri().required()).required(),
 });
 
-module.exports = { create };
+const put = joi.object({
+  name: joi.string().min(2).max(50),
+  price: joi.number(),
+  size: joi.string().min(1).max(2),
+  description: joi.string().min(5),
+  stock: joi.number().integer().positive(),
+  categoriesId: joi.array().items(joi.number().integer()),
+  photos: joi.array().items(joi.string().uri().required()),
+});
+
+module.exports = { create, put };

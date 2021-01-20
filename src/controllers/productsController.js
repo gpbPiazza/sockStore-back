@@ -77,6 +77,23 @@ function getAllProducts(offset, limit) {
   });
 }
 
+function getById(id) {
+  return Product.findByPk(id, {
+    include: [{
+      model: Category,
+      attributes: ['id', 'name'],
+      through: {
+        model: CategoriesProduct,
+        attributes: [],
+      },
+    },
+    {
+      model: Photo,
+      attributes: ['id', 'photo'],
+    }],
+  });
+}
+
 async function count() {
   return Product.count();
 }
@@ -86,4 +103,5 @@ module.exports = {
   createProduct,
   count,
   getAllProducts,
+  getById,
 };
