@@ -173,4 +173,20 @@ router.get('/products/:id', authAdminMiddleware, async (req, res) => {
   }
 });
 
+router.put('/products/:id', authAdminMiddleware, async (req, res) => {
+  try {
+    const { error } = productsSchemas.put.validate(req.body);
+    if (error) return res.status(422).send({ error: error.details[0].message });
+
+    const product = await productsController.putProduct(+req.params.id, req.body);
+    return res
+      .status(200)
+      .send(product);
+  } catch (e) {
+    console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'Categories not found' });
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
 module.exports = router;

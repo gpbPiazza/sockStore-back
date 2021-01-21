@@ -2,7 +2,7 @@ const joi = require('joi');
 
 const create = joi.object({
   name: joi.string().min(2).max(50).required(),
-  price: joi.string().pattern(/^[0-9]+(,[0-9]{1,2})?$/, 'Price format 12,00').required(),
+  price: joi.number().required(),
   size: joi.string().min(1).max(2).required(),
   description: joi.string().min(5).required(),
   stock: joi.number().integer().positive().required(),
