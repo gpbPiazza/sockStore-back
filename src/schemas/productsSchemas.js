@@ -18,6 +18,6 @@ const put = joi.object({
   stock: joi.number().integer().positive(),
   categoriesId: joi.array().items(joi.number().integer()),
   photos: joi.array().items(joi.string().uri().required()),
-});
+}).options({ allowUnknown: true });
 
 module.exports = { create, put };

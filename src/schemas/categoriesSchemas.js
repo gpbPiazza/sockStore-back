@@ -1,7 +1,11 @@
 const joi = require('joi');
 
-const name = joi.object({
+const create = joi.object({
   name: joi.string().min(2).max(50).required(),
 });
 
-module.exports = { name };
+const update = joi.object({
+  name: joi.string().min(2).max(50).required(),
+}).options({ allowUnknown: true });
+
+module.exports = { create, update };
