@@ -123,7 +123,7 @@ async function count() {
   return Product.count();
 }
 
-async function getHighlightProducts() {
+async function getTrendingProducts() {
   const orderedProductsBySales = await Product.findAll({
     where: {
       stock: {
@@ -202,6 +202,6 @@ module.exports = {
   count,
   getAllProducts,
   updateProduct,
-  getHighlightProducts,
+  getTrendingProducts,
   getProductByIdAdmin,
 };

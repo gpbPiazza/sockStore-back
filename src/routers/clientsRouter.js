@@ -5,6 +5,7 @@ const router = express.Router();
 
 const productsController = require('../controllers/productsController');
 const categoriesController = require('../controllers/categoriesController');
+const ordersController = require('../controllers/ordersControllers');
 const orderSchemas = require('../schemas/orderSchemas');
 
 router.get('/products/:id', async (req, res) => {
@@ -43,10 +44,11 @@ router.post('/orders', async (req, res) => {
 
   const { error } = orderSchemas.order.validate(orderParams);
   if (error) return res.status(422).send({ error: error.details[0].message });
-  const { client, address, products } = req.body;
   try {
-
+    await ordersController.postOrder(req.body);
+    return orderParams;
   } catch (err) {
+    console.log(err);
     return res.send({ error: 'call someone' });
   }
 });
