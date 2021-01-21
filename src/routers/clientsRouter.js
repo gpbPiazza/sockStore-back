@@ -5,6 +5,7 @@ const router = express.Router();
 
 const productsController = require('../controllers/productsController');
 const categoriesController = require('../controllers/categoriesController');
+const orderSchemas = require('../schemas/orderSchemas');
 
 router.get('/products/:id', async (req, res) => {
   const { id } = req.params;
@@ -28,10 +29,23 @@ router.get('/categories', async (req, res) => {
   }
 });
 
-router.get('/highlights', async (req, res) => {
+router.get('/trendings', async (req, res) => {
   try {
-    const orderedProductsBySales = await productsController.getHighlightProducts();
+    const orderedProductsBySales = await productsController.getTrendingProducts();
     return res.send(orderedProductsBySales);
+  } catch (err) {
+    return res.send({ error: 'call someone' });
+  }
+});
+
+router.post('/orders', async (req, res) => {
+  const orderParams = req.body;
+
+  const { error } = orderSchemas.order.validate(orderParams);
+  if (error) return res.status(422).send({ error: error.details[0].message });
+  const { client, address, products } = req.body;
+  try {
+
   } catch (err) {
     return res.send({ error: 'call someone' });
   }
