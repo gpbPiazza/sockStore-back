@@ -79,29 +79,13 @@ function getAllProducts(offset, limit) {
   });
 }
 
-function getById(id) {
-  return Product.findByPk(id, {
-    include: [{
-      model: Category,
-      attributes: ['id', 'name'],
-      through: {
-        model: CategoriesProduct,
-        attributes: [],
-      },
-    },
-    {
-      model: Photo,
-      attributes: ['id', 'photo'],
-    }],
-  });
-}
-
-async function putProduct(id, params) {
+async function updateProduct(id, params) {
   const {
     name, price, size, description, stock, categoriesId, photos,
   } = params;
 
   const product = await Product.findByPk(id);
+  if (!product) throw new NotFoundError();
   const productId = product.id;
 
   await product.update({
@@ -177,7 +161,6 @@ module.exports = {
   createProduct,
   count,
   getAllProducts,
-  getById,
-  putProduct,
+  updateProduct,
   getHighlightProducts,
 };
