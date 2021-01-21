@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable radix */
 const express = require('express');
 
 const router = express.Router();
@@ -55,10 +57,12 @@ router.post('/categories', authAdminMiddleware, async (req, res) => {
 });
 
 router.get('/categories', authAdminMiddleware, async (req, res) => {
-  const { offset, limit } = req.query;
+  const offset = parseInt(req.query._start);
+  const limit = parseInt(req.query._end) - offset;
+  const categoryId = parseInt(req.query['categories.id']);
 
   try {
-    const categories = await categoriesController.getAll(offset, limit);
+    const categories = await categoriesController.getAll(offset, limit, categoryId);
     const total = await categoriesController.count();
     return res
       .header('Access-Control-Expose-Headers', 'X-Total-Count')

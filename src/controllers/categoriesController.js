@@ -12,8 +12,16 @@ async function create({ name }) {
   return { id: category.id, name: category.name };
 }
 
-function getAll(offset, limit) {
-  return Category.findAll({ attributes: ['id', 'name'], offset, limit });
+function getAll(offset, limit, categoryId) {
+  return Category.findAll({
+    attributes: ['id', 'name'],
+    offset,
+    limit,
+    include: {
+      model: Product,
+      where: categoryId,
+    },
+  });
 }
 
 async function deleteCategory(categoryId) {
