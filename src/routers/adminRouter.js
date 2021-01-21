@@ -151,7 +151,7 @@ router.get('/products', authAdminMiddleware, async (req, res) => {
     return res
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
       .set('X-Total-Count', total)
-      .status(201)
+      .status(200)
       .send(products);
   } catch (e) {
     console.log(e);
@@ -188,7 +188,6 @@ router.put('/products/:id', authAdminMiddleware, async (req, res) => {
   }
 });
 
-
 router.delete('/products/:id', authAdminMiddleware, async (req, res) => {
   try {
     const productId = req.params.id;
@@ -202,8 +201,8 @@ router.delete('/products/:id', authAdminMiddleware, async (req, res) => {
   } catch (e) {
     console.log(e);
     if (e instanceof NotFoundError) return res.status(404).send({ error: 'product not found' });
-     return res.status(500).send({ error: 'call the responsible person' });
- }
-}
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
 
 module.exports = router;

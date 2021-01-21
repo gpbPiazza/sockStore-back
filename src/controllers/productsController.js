@@ -154,18 +154,15 @@ async function getHighlightProducts() {
     orderedProductsBySales[2],
     orderedProductsBySales[3],
   ];
-
 }
 
 async function deleteProduct(productId) {
   const product = await Product.findByPk(productId);
   if (!product) throw new NotFoundError();
 
-  const relationship = await CategoriesProduct.findAll({ where: { productId } });
-  await relationship.destroy();
+  await CategoriesProduct.destroy({ where: { productId } });
 
-  const productPhotos = await Photo.findAll({ where: { productId } });
-  await productPhotos.destroy();
+  await Photo.destroy({ where: { productId } });
 
   await product.destroy();
   return product;
