@@ -28,4 +28,13 @@ router.get('/categories', async (req, res) => {
   }
 });
 
+router.get('/highlights', async (req, res) => {
+  try {
+    const orderedProductsBySales = await productsController.getHighlightProducts();
+    return res.send(orderedProductsBySales);
+  } catch (err) {
+    return res.send({ error: 'call someone' });
+  }
+});
+
 module.exports = router;

@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+const sequelize = require('../utils/database');
 const NotFoundError = require('../errors/NotFoundError');
 const CategoriesProduct = require('../models/CategoriesProduct');
 const Category = require('../models/Category');
@@ -48,7 +50,7 @@ async function createProduct(params) {
   }));
   await CategoriesProduct.bulkCreate(categoriesWithProductId);
 
-  const photosWithProductId = photos.map((photo) => ({ photo, productId: product.id }));
+  const photosWithProductId = photos.map((photo) => ({ photo, productId }));
   const photosCreated = await Photo.bulkCreate(photosWithProductId, { attributes: ['id', 'photo'] });
 
   return {
@@ -77,8 +79,98 @@ function getAllProducts(offset, limit) {
   });
 }
 
+function getById(id) {
+  return Product.findByPk(id, {
+    include: [{
+      model: Category,
+      attributes: ['id', 'name'],
+      through: {
+        model: CategoriesProduct,
+        attributes: [],
+      },
+    },
+    {
+      model: Photo,
+      attributes: ['id', 'photo'],
+    }],
+  });
+}
+
+async function putProduct(id, params) {
+  const {
+    name, price, size, description, stock, categoriesId, photos,
+  } = params;
+
+  const product = await Product.findByPk(id);
+  const productId = product.id;
+
+  await product.update({
+    name, price, size, description, stock,
+  });
+
+  if (photos) {
+    await Photo.destroy({ where: { productId } });
+    const photosWithProductId = photos.map((photo) => ({ photo, productId }));
+    await Photo.bulkCreate(photosWithProductId, { attributes: ['id', 'photo'] });
+  }
+
+  if (categoriesId) {
+    await CategoriesProduct.destroy({ where: { productId } });
+    const categoriesWithProductId = categoriesId.map((categoryId) => ({
+      categoryId, productId,
+    }));
+    await CategoriesProduct.bulkCreate(categoriesWithProductId);
+  }
+
+  return Product.findByPk(id, {
+    include: [{
+      model: Category,
+      attributes: ['id', 'name'],
+      through: {
+        model: CategoriesProduct,
+        attributes: [],
+      },
+    },
+    {
+      model: Photo,
+      attributes: ['id', 'photo'],
+    }],
+  });
+}
+
 async function count() {
   return Product.count();
+}
+
+async function getHighlightProducts() {
+  const orderedProductsBySales = await Product.findAll({
+    where: {
+      stock: {
+        [Op.gt]: 0,
+      },
+    },
+    attributes: [
+      'id',
+      'name',
+      'price',
+      [sequelize.literal('(SELECT COUNT(*) FROM "ordersProducts" WHERE "ordersProducts"."productId" = Product.id)'), 'salesCount'],
+    ],
+    include: [{
+      model: Photo,
+      attributes: ['id', 'photo'],
+    }],
+    order: [[sequelize.literal('"salesCount"'), 'DESC']],
+  });
+  if (orderedProductsBySales.length < 4) {
+    return orderedProductsBySales;
+  }
+  return [
+    orderedProductsBySales[0],
+    orderedProductsBySales[1],
+    orderedProductsBySales[2],
+    orderedProductsBySales[3],
+  ];
+
 }
 
 async function deleteProduct(productId) {
@@ -101,4 +193,7 @@ module.exports = {
   deleteProduct,
   count,
   getAllProducts,
+  getById,
+  putProduct,
+  getHighlightProducts,
 };
