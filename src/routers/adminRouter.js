@@ -110,7 +110,7 @@ router.put('/categories/:id', authAdminMiddleware, async (req, res) => {
   const categoryParams = req.body;
   const { name } = categoryParams;
 
-  const { error } = categoriesSchemas.name.validate(categoryParams);
+  const { error } = categoriesSchemas.update.validate(categoryParams);
   if (error) return res.status(422).send({ error: error.details[0].message });
 
   try {
