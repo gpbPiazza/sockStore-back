@@ -210,7 +210,10 @@ router.get('/clients', authAdminMiddleware, async (req, res) => {
   try {
     const { offset, limit } = req.query;
     const clients = await clientsController.getAllClients(offset, limit);
+    const total = await clientsController.count();
     return res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
       .status(200)
       .send(clients);
   } catch (e) {
