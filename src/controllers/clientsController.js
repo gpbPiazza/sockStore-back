@@ -1,9 +1,9 @@
 const Client = require('../models/Client');
-const Adress = require('../models/Address');
+const Address = require('../models/Address');
 const NotFoundError = require('../errors/NotFoundError');
 
 function getAllClients(offset, limit) {
-  return Client.findAll({ model: Adress, offset, limit });
+  return Client.findAll({ model: Address, offset, limit });
 }
 
 function count() {
@@ -11,7 +11,7 @@ function count() {
 }
 
 async function getClientById(clientId) {
-  const client = await Client.findByPk(clientId, { model: Adress });
+  const client = await Client.findByPk(clientId, { model: Address });
   if (!client) throw new NotFoundError();
 
   return client;
