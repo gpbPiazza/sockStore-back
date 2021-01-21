@@ -39,7 +39,7 @@ router.post('/logout', authAdminMiddleware, (req, res) => {
 router.post('/categories', authAdminMiddleware, async (req, res) => {
   const categoryParams = req.body;
 
-  const { error } = categoriesSchemas.name.validate(categoryParams);
+  const { error } = categoriesSchemas.create.validate(categoryParams);
   if (error) return res.status(422).send({ error: error.details[0].message });
 
   try {
