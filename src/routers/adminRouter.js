@@ -177,7 +177,8 @@ router.put('/products/:id', authAdminMiddleware, async (req, res) => {
     const { error } = productsSchemas.put.validate(req.body);
     if (error) return res.status(422).send({ error: error.details[0].message });
 
-    const product = await productsController.updateProduct(+req.params.id, req.body);
+    await productsController.updateProduct(+req.params.id, req.body);
+    const product = await productsController.getProductByIdAdmin(+req.params.id);
     return res
       .status(200)
       .send(product);

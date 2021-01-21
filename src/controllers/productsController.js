@@ -105,21 +105,6 @@ async function updateProduct(id, params) {
     }));
     await CategoriesProduct.bulkCreate(categoriesWithProductId);
   }
-
-  return Product.findByPk(id, {
-    include: [{
-      model: Category,
-      attributes: ['id', 'name'],
-      through: {
-        model: CategoriesProduct,
-        attributes: [],
-      },
-    },
-    {
-      model: Photo,
-      attributes: ['id', 'photo'],
-    }],
-  });
 }
 
 async function count() {
