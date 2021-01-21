@@ -76,29 +76,13 @@ function getAllProducts(offset, limit) {
   });
 }
 
-function getById(id) {
-  return Product.findByPk(id, {
-    include: [{
-      model: Category,
-      attributes: ['id', 'name'],
-      through: {
-        model: CategoriesProduct,
-        attributes: [],
-      },
-    },
-    {
-      model: Photo,
-      attributes: ['id', 'photo'],
-    }],
-  });
-}
-
-async function putProduct(id, params) {
+async function updateProduct(id, params) {
   const {
     name, price, size, description, stock, categoriesId, photos,
   } = params;
 
   const product = await Product.findByPk(id);
+  if (!product) throw new NotFoundError();
   const productId = product.id;
 
   await product.update({
@@ -169,12 +153,55 @@ async function getHighlightProducts() {
   ];
 }
 
+async function deleteProduct(productId) {
+  const product = await Product.findByPk(productId);
+  if (!product) throw new NotFoundError();
+
+  await CategoriesProduct.destroy({ where: { productId } });
+
+  await Photo.destroy({ where: { productId } });
+
+  await product.destroy();
+  return product;
+}
+
+async function getProductByIdAdmin(productId) {
+  const product = await Product.findByPk(productId, {
+    include: [{
+      model: Category,
+      attributes: ['id'],
+      through: {
+        model: CategoriesProduct,
+        attributes: [],
+      },
+    },
+    {
+      model: Photo,
+      attributes: ['photo'],
+    }],
+  });
+  if (!product) throw new NotFoundError();
+
+  const rawPhotos = product.photos;
+  const rawCategories = product.categories;
+
+  const categories = rawCategories.map((c) => c.dataValues.id);
+
+  const photos = rawPhotos.map((p) => p.dataValues.photo);
+
+  delete product.dataValues.categories;
+  delete product.dataValues.photos;
+
+  return { ...product.dataValues, photos, categoriesId: categories };
+}
+
 module.exports = {
   getProductInformations,
   createProduct,
+  deleteProduct,
   count,
   getAllProducts,
-  getById,
-  putProduct,
+  updateProduct,
   getHighlightProducts,
+  getProductByIdAdmin,
 };
