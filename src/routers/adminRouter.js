@@ -51,6 +51,7 @@ router.post('/categories', authAdminMiddleware, async (req, res) => {
       .status(201)
       .send(category);
   } catch (e) {
+    console.log(e, 'aiaiaiaia');
     if (e instanceof ConflictError) return res.status(409).send({ error: 'This category name its already exists' });
     return res.status(500).send({ error: 'call the responsible person' });
   }
