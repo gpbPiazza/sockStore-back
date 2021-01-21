@@ -222,4 +222,19 @@ router.get('/clients', authAdminMiddleware, async (req, res) => {
   }
 });
 
+router.get('/clients/:id', authAdminMiddleware, async (req, res) => {
+  try {
+    const client = await clientsController.getClientById(+req.params.id);
+    const total = await clientsController.count();
+    return res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(200)
+      .send(client);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
 module.exports = router;
