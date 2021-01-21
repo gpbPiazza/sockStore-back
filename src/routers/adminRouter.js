@@ -148,7 +148,8 @@ router.post('/products', authAdminMiddleware, async (req, res) => {
 });
 
 router.get('/products', authAdminMiddleware, async (req, res) => {
-  const { offset, limit } = req.query;
+  const offset = parseInt(req.query._start);
+  const limit = parseInt(req.query._end) - offset;
 
   try {
     const products = await productsController.getAllProducts(offset, limit);
@@ -211,8 +212,10 @@ router.delete('/products/:id', authAdminMiddleware, async (req, res) => {
 });
 
 router.get('/clients', authAdminMiddleware, async (req, res) => {
+  const offset = parseInt(req.query._start);
+  const limit = parseInt(req.query._end) - offset;
+
   try {
-    const { offset, limit } = req.query;
     const clients = await clientsController.getAllClients(offset, limit);
     const total = await clientsController.count();
     return res
