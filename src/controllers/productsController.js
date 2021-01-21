@@ -154,11 +154,27 @@ async function getHighlightProducts() {
     orderedProductsBySales[2],
     orderedProductsBySales[3],
   ];
+
+}
+
+async function deleteProduct(productId) {
+  const product = await Product.findByPk(productId);
+  if (!product) throw new NotFoundError();
+
+  const relationship = await CategoriesProduct.findAll({ where: { productId } });
+  await relationship.destroy();
+
+  const productPhotos = await Photo.findAll({ where: { productId } });
+  await productPhotos.destroy();
+
+  await product.destroy();
+  return product;
 }
 
 module.exports = {
   getProductInformations,
   createProduct,
+  deleteProduct,
   count,
   getAllProducts,
   updateProduct,

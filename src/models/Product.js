@@ -41,6 +41,7 @@ Product.init(
   {
     sequelize,
     modelName: 'product',
+    onDelete: 'cascade',
   },
 );
 

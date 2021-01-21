@@ -188,4 +188,22 @@ router.put('/products/:id', authAdminMiddleware, async (req, res) => {
   }
 });
 
+
+router.delete('/products/:id', authAdminMiddleware, async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await productsController.deleteProduct(productId);
+    const total = await productsController.count();
+
+    return res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(200).send(product);
+  } catch (e) {
+    console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'product not found' });
+     return res.status(500).send({ error: 'call the responsible person' });
+ }
+}
+
 module.exports = router;
