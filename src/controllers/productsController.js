@@ -7,10 +7,7 @@ const Photo = require('../models/Photo');
 const Product = require('../models/Product');
 
 async function getProductInformations(id) {
-  const product = await Product.findOne({
-    where: {
-      id,
-    },
+  const product = await Product.findByPk(id, {
     include: [
       {
         model: Category,
