@@ -240,6 +240,22 @@ router.get('/clients/:id', authAdminMiddleware, async (req, res) => {
       .send(client);
   } catch (e) {
     console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'client not found' });
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
+router.get('/orders', authAdminMiddleware, async (req, res) => {
+  try {
+    const client = await clientsController.getClientById(+req.params.id);
+    const total = await clientsController.count();
+    return res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(200)
+      .send(client);
+  } catch (e) {
+    console.log(e);
     return res.status(500).send({ error: 'call the responsible person' });
   }
 });
