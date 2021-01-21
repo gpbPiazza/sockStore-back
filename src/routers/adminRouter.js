@@ -37,7 +37,7 @@ router.post('/categories', authAdminMiddleware, async (req, res) => {
   const categoryParams = req.body;
 
   const { error } = categoriesSchemas.name.validate(categoryParams);
-  if (error) return res.status(422).send({ error: error.detail[0].message });
+  if (error) return res.status(422).send({ error: error.details[0].message });
 
   try {
     const category = await categoriesController.create(categoryParams);
@@ -105,7 +105,7 @@ router.put('/categories/:id', authAdminMiddleware, async (req, res) => {
   const { name } = categoryParams;
 
   const { error } = categoriesSchemas.name.validate(categoryParams);
-  if (error) return res.status(422).send({ error: error.detail[0].message });
+  if (error) return res.status(422).send({ error: error.details[0].message });
 
   try {
     const categoryId = req.params.id;
@@ -124,11 +124,10 @@ router.put('/categories/:id', authAdminMiddleware, async (req, res) => {
 
 router.post('/products', authAdminMiddleware, async (req, res) => {
   const productParams = req.body;
-
-  const { error } = productsSchemas.create.validate(productParams);
-  if (error) return res.status(422).send({ error: error.detail[0].message });
-
   try {
+    const { error } = productsSchemas.create.validate(productParams);
+    if (error) return res.status(422).send({ error: error.details[0].message });
+
     const product = await productsController.createProduct(productParams);
     const total = await productsController.count();
     return res
@@ -137,7 +136,39 @@ router.post('/products', authAdminMiddleware, async (req, res) => {
       .status(201)
       .send(product);
   } catch (e) {
-    if (e instanceof ConflictError) return res.status(409).send({ error: 'This category name its already exists' });
+    console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'Categories not found' });
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
+router.get('/products', authAdminMiddleware, async (req, res) => {
+  const { offset, limit } = req.query;
+
+  try {
+    const products = await productsController.getAllProducts(offset, limit);
+    const total = await productsController.count();
+    return res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(201)
+      .send(products);
+  } catch (e) {
+    console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'Categories not found' });
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
+router.get('/products/:id', authAdminMiddleware, async (req, res) => {
+  try {
+    const product = await productsController.getById(+req.params.id);
+    return res
+      .status(200)
+      .send(product);
+  } catch (e) {
+    console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'Categories not found' });
     return res.status(500).send({ error: 'call the responsible person' });
   }
 });
