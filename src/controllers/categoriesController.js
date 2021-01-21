@@ -46,7 +46,7 @@ async function getCategorizedProducts() {
     include: [{
       model: Product,
       Order: [['stock', 'id', 'DES']],
-      attributes: ['id', 'name', 'price', 'size', 'description', 'stock'],
+      attributes: ['id', 'name', 'price'],
       include: [{
         model: Photo,
         attributes: ['id', 'photo'],
