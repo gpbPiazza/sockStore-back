@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-expressions */
+const { Op } = require('sequelize');
+const sequelize = require('../utils/database');
 const NotFoundError = require('../errors/NotFoundError');
 const CategoriesProduct = require('../models/CategoriesProduct');
 const Category = require('../models/Category');
@@ -141,6 +142,36 @@ async function count() {
   return Product.count();
 }
 
+async function getHighlightProducts() {
+  const orderedProductsBySales = await Product.findAll({
+    where: {
+      stock: {
+        [Op.gt]: 0,
+      },
+    },
+    attributes: [
+      'id',
+      'name',
+      'price',
+      [sequelize.literal('(SELECT COUNT(*) FROM "ordersProducts" WHERE "ordersProducts"."productId" = Product.id)'), 'salesCount'],
+    ],
+    include: [{
+      model: Photo,
+      attributes: ['id', 'photo'],
+    }],
+    order: [[sequelize.literal('"salesCount"'), 'DESC']],
+  });
+  if (orderedProductsBySales.length < 4) {
+    return orderedProductsBySales;
+  }
+  return [
+    orderedProductsBySales[0],
+    orderedProductsBySales[1],
+    orderedProductsBySales[2],
+    orderedProductsBySales[3],
+  ];
+}
+
 module.exports = {
   getProductInformations,
   createProduct,
@@ -148,4 +179,5 @@ module.exports = {
   getAllProducts,
   getById,
   putProduct,
+  getHighlightProducts,
 };
