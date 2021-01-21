@@ -161,7 +161,7 @@ router.get('/products', authAdminMiddleware, async (req, res) => {
 
 router.get('/products/:id', authAdminMiddleware, async (req, res) => {
   try {
-    const product = await productsController.getById(+req.params.id);
+    const product = await productsController.getProductByIdAdmin(+req.params.id);
     return res
       .status(200)
       .send(product);
