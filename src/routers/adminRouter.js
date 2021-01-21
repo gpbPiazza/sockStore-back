@@ -208,10 +208,11 @@ router.delete('/products/:id', authAdminMiddleware, async (req, res) => {
 
 router.get('/clients', authAdminMiddleware, async (req, res) => {
   try {
-    const cliests = await clientsController.getAllClients();
+    const { offset, limit } = req.query;
+    const clients = await clientsController.getAllClients(offset, limit);
     return res
       .status(200)
-      .send(cliests);
+      .send(clients);
   } catch (e) {
     console.log(e);
     return res.status(500).send({ error: 'call the responsible person' });
