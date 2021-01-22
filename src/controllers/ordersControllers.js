@@ -1,6 +1,9 @@
-const Client = require('../models/Address');
+/* eslint-disable no-param-reassign */
+const { Sequelize } = require('sequelize');
+const Client = require('../models/Client');
 const Address = require('../models/Address');
 const Product = require('../models/Product');
+const OrdersProduct = require('../models/OrdersProduct');
 const Order = require('../models/Order');
 
 async function postOrder(client, address, products) {
@@ -11,34 +14,42 @@ async function postOrder(client, address, products) {
   }
 }
 
-function getAllOrders() {
-  return Order.findAll({
-    model: Client,
+async function getAllOrders() {
+  const orders = await Order.findAll({
     include: [{
       model: Product,
-      attributes: ['id', 'name', 'description', 'stock'],
+      attributes: ['id', 'name', 'size', 'description', 'stock'],
+      through: {
+        model: OrdersProduct,
+        attributes: [
+          'unitPrice',
+          'quantity',
+        ],
+      },
     }],
-
   });
+
+  orders.forEach((order) => {
+    const { products } = order;
+    let totalOrder = 0;
+    products.forEach(({ ordersProduct }) => {
+      const { quantity, unitPrice } = ordersProduct.dataValues;
+      const subTotal = quantity * unitPrice;
+      ordersProduct.dataValues.subTotal = subTotal;
+      totalOrder += subTotal;
+    });
+    order.dataValues.totalOrder = totalOrder;
+  });
+
+  return orders;
 }
 
-// include: [{
-//   model: Category,
-//   attributes: ['id', 'name'],
-//   through: {
-//     model: CategoriesProduct,
-//     attributes: [],
-//   },
-// },
-// {
-//   model: Photo,
-//   attributes: ['id', 'photo'],
-// }],
-// offset,
-// limit,
-// }
+function count() {
+  return Order.count();
+}
 
 module.exports = {
   postOrder,
+  count,
   getAllOrders,
 };

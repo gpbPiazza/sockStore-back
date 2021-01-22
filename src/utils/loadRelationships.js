@@ -9,7 +9,10 @@ const Client = require('../models/Client');
 
 Category.belongsToMany(Product, { through: CategoriesProduct });
 Product.belongsToMany(Category, { through: CategoriesProduct });
+
 Order.belongsToMany(Product, { through: OrdersProduct });
 Product.belongsToMany(Order, { through: OrdersProduct });
-Client.hasMany(Address);
+
+Client.hasOne(Address);
 Product.hasMany(Photo);
+Client.hasMany(Order);
