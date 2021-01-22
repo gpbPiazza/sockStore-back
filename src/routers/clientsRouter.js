@@ -48,6 +48,7 @@ router.post('/orders', async (req, res) => {
     await ordersController.postOrder(req.body);
     return res.sendStatus(201);
   } catch (err) {
+    console.log(err);
     if (err instanceof NotFoundError) {
       return res.status(404).send({ error: 'product not found' });
     }
