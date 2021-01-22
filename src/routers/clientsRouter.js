@@ -5,6 +5,7 @@ const router = express.Router();
 
 const productsController = require('../controllers/productsController');
 const categoriesController = require('../controllers/categoriesController');
+const ordersController = require('../controllers/ordersControllers');
 const orderSchemas = require('../schemas/orderSchemas');
 
 router.get('/products/:id', async (req, res) => {
@@ -25,7 +26,7 @@ router.get('/categories', async (req, res) => {
     const categorizedProducts = await categoriesController.getCategorizedProducts();
     return res.send(categorizedProducts);
   } catch (err) {
-    return res.send({ error: 'call someone' });
+    return res.status(500).send({ error: 'call someone' });
   }
 });
 
@@ -34,7 +35,7 @@ router.get('/trendings', async (req, res) => {
     const orderedProductsBySales = await productsController.getTrendingProducts();
     return res.send(orderedProductsBySales);
   } catch (err) {
-    return res.send({ error: 'call someone' });
+    return res.status(500).send({ error: 'call someone' });
   }
 });
 
@@ -43,11 +44,15 @@ router.post('/orders', async (req, res) => {
 
   const { error } = orderSchemas.order.validate(orderParams);
   if (error) return res.status(422).send({ error: error.details[0].message });
-  const { client, address, products } = req.body;
   try {
-
+    await ordersController.postOrder(req.body);
+    return res.sendStatus(201);
   } catch (err) {
-    return res.send({ error: 'call someone' });
+    console.log(err);
+    if (err instanceof NotFoundError) {
+      return res.status(404).send({ error: 'product not found' });
+    }
+    return res.status(500).send({ error: 'call someone' });
   }
 });
 

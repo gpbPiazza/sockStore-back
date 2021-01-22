@@ -27,6 +27,10 @@ OrdersProduct.init(
         key: 'id',
       },
     },
+    quantity: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
     unitPrice: {
       type: Sequelize.DOUBLE,
       allowNull: false,
