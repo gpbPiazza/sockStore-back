@@ -265,7 +265,7 @@ router.get('/orders', authAdminMiddleware, async (req, res) => {
 
 router.get('/orders/:id', authAdminMiddleware, async (req, res) => {
   try {
-    const order = await ordersController.getOrdersById(+req.params.id);
+    const order = await ordersController.getOrderById(+req.params.id);
     const total = await ordersController.count();
 
     return res

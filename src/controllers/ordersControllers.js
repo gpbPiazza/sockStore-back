@@ -83,7 +83,9 @@ async function getOrderById(orderId) {
       },
     }],
   });
-  return order;
+  const { clientId } = order;
+  const clientWithAddress = await Client.findByPk(clientId, { include: Address });
+  return { ...order.dataValues, ...clientWithAddress.dataValues };
 }
 
 module.exports = {
