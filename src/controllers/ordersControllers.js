@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 const Client = require('../models/Client');
@@ -68,8 +69,26 @@ function count() {
   return Order.count();
 }
 
+async function getOrderById(orderId) {
+  const order = await Order.findByPk(orderId, {
+    include: [{
+      model: Product,
+      attributes: ['id', 'name', 'size', 'description', 'stock'],
+      through: {
+        model: OrdersProduct,
+        attributes: [
+          'unitPrice',
+          'quantity',
+        ],
+      },
+    }],
+  });
+  return order;
+}
+
 module.exports = {
   postOrder,
+  getOrderById,
   count,
   getAllOrders,
 };

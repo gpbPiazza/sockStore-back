@@ -263,4 +263,20 @@ router.get('/orders', authAdminMiddleware, async (req, res) => {
   }
 });
 
+router.get('/orders/:id', authAdminMiddleware, async (req, res) => {
+  try {
+    const order = await ordersController.getOrdersById(+req.params.id);
+    const total = await ordersController.count();
+
+    return res
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .set('X-Total-Count', total)
+      .status(200)
+      .send(order);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
 module.exports = router;
