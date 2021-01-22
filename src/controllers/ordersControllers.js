@@ -83,9 +83,27 @@ async function getOrderById(orderId) {
       },
     }],
   });
+  const { products } = order;
+  let totalOrder = 0;
+  products.forEach(({ ordersProduct }) => {
+    const { quantity, unitPrice } = ordersProduct.dataValues;
+    const subTotal = quantity * unitPrice;
+    ordersProduct.dataValues.subTotal = subTotal;
+    totalOrder += subTotal;
+  });
+  order.dataValues.totalOrder = totalOrder;
   const { clientId } = order;
   const clientWithAddress = await Client.findByPk(clientId, { include: Address });
   return { ...order.dataValues, ...clientWithAddress.dataValues };
+}
+
+async function updateStatusSendOrder(id, alredySend) {
+  const order = await Order.findByPk(id);
+  if (!order) throw new NotFoundError();
+
+  await order.update({ alredySend });
+
+  return order;
 }
 
 module.exports = {
@@ -93,4 +111,5 @@ module.exports = {
   getOrderById,
   count,
   getAllOrders,
+  updateStatusSendOrder,
 };

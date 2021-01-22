@@ -16,6 +16,7 @@ const ConflictError = require('../errors/ConflictError');
 const NotFoundError = require('../errors/NotFoundError');
 const Unauthorized = require('../errors/Unauthorized');
 const adminSchemas = require('../schemas/adminSchemas');
+const orderSchemas = require('../schemas/orderSchemas');
 
 router.post('/login', (req, res) => {
   const loginParams = req.body;
@@ -275,6 +276,22 @@ router.get('/orders/:id', authAdminMiddleware, async (req, res) => {
       .send(order);
   } catch (e) {
     console.log(e);
+    return res.status(500).send({ error: 'call the responsible person' });
+  }
+});
+
+router.put('/orders/:id', authAdminMiddleware, async (req, res) => {
+  try {
+    const { error } = orderSchemas.update.validate(req.body);
+    if (error) return res.status(422).send({ error: error.details[0].message });
+
+    const { alredySend } = req.body;
+
+    const order = await ordersController.updateStatusSendOrder(+req.params.id, alredySend);
+    return res.status(200).send(order);
+  } catch (e) {
+    console.log(e);
+    if (e instanceof NotFoundError) return res.status(404).send({ error: 'Product not found' });
     return res.status(500).send({ error: 'call the responsible person' });
   }
 });

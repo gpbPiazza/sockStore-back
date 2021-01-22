@@ -23,4 +23,8 @@ const order = joi.object({
   })).required(),
 });
 
-module.exports = { order };
+const update = joi.object({
+  alredySend: joi.boolean(),
+}).options({ allowUnknown: true });
+
+module.exports = { order, update };
