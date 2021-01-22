@@ -25,6 +25,10 @@ Order.init(
     updatedAt: {
       type: Sequelize.DATE,
     },
+    alredySend: {
+      type: Sequelize.DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,
