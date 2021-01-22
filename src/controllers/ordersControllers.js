@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 const Client = require('../models/Client');
@@ -6,6 +7,15 @@ const Product = require('../models/Product');
 const Order = require('../models/Order');
 const OrdersProduct = require('../models/OrdersProduct');
 const NotFoundError = require('../errors/NotFoundError');
+=======
+/* eslint-disable no-param-reassign */
+const { Sequelize } = require('sequelize');
+const Client = require('../models/Client');
+const Address = require('../models/Address');
+const Product = require('../models/Product');
+const OrdersProduct = require('../models/OrdersProduct');
+const Order = require('../models/Order');
+>>>>>>> main
 
 async function verifyProductsExist(products) {
   const productsIds = products.map((p) => p.productId);
@@ -33,6 +43,42 @@ async function postOrder(body) {
   }
 }
 
+async function getAllOrders() {
+  const orders = await Order.findAll({
+    include: [{
+      model: Product,
+      attributes: ['id', 'name', 'size', 'description', 'stock'],
+      through: {
+        model: OrdersProduct,
+        attributes: [
+          'unitPrice',
+          'quantity',
+        ],
+      },
+    }],
+  });
+
+  orders.forEach((order) => {
+    const { products } = order;
+    let totalOrder = 0;
+    products.forEach(({ ordersProduct }) => {
+      const { quantity, unitPrice } = ordersProduct.dataValues;
+      const subTotal = quantity * unitPrice;
+      ordersProduct.dataValues.subTotal = subTotal;
+      totalOrder += subTotal;
+    });
+    order.dataValues.totalOrder = totalOrder;
+  });
+
+  return orders;
+}
+
+function count() {
+  return Order.count();
+}
+
 module.exports = {
   postOrder,
+  count,
+  getAllOrders,
 };

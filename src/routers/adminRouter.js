@@ -6,6 +6,7 @@ const router = express.Router();
 
 const adminController = require('../controllers/adminController');
 const categoriesSchemas = require('../schemas/categoriesSchemas');
+const ordersController = require('../controllers/ordersControllers');
 const productsSchemas = require('../schemas/productsSchemas');
 const authAdminMiddleware = require('../middlewares/authenticationAdmin');
 const productsController = require('../controllers/productsController');
@@ -248,8 +249,9 @@ router.get('/clients/:id', authAdminMiddleware, async (req, res) => {
 
 router.get('/orders', authAdminMiddleware, async (req, res) => {
   try {
-    const client = await clientsController.getClientById(+req.params.id);
-    const total = await clientsController.count();
+    const client = await ordersController.getAllOrders();
+    const total = await ordersController.count();
+
     return res
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
       .set('X-Total-Count', total)
