@@ -26,7 +26,7 @@ router.get('/categories', async (req, res) => {
     const categorizedProducts = await categoriesController.getCategorizedProducts();
     return res.send(categorizedProducts);
   } catch (err) {
-    return res.send({ error: 'call someone' });
+    return res.status(500).send({ error: 'call someone' });
   }
 });
 
@@ -35,7 +35,7 @@ router.get('/trendings', async (req, res) => {
     const orderedProductsBySales = await productsController.getTrendingProducts();
     return res.send(orderedProductsBySales);
   } catch (err) {
-    return res.send({ error: 'call someone' });
+    return res.status(500).send({ error: 'call someone' });
   }
 });
 
@@ -46,10 +46,12 @@ router.post('/orders', async (req, res) => {
   if (error) return res.status(422).send({ error: error.details[0].message });
   try {
     await ordersController.postOrder(req.body);
-    return orderParams;
+    return res.sendStatus(201);
   } catch (err) {
-    console.log(err);
-    return res.send({ error: 'call someone' });
+    if (err instanceof NotFoundError) {
+      return res.status(404).send({ error: 'product not found' });
+    }
+    return res.status(500).send({ error: 'call someone' });
   }
 });
 

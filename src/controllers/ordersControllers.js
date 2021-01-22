@@ -1,34 +1,34 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-const Client = require('../models/Address');
+const Client = require('../models/Client');
 const Address = require('../models/Address');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const OrdersProduct = require('../models/OrdersProduct');
+const NotFoundError = require('../errors/NotFoundError');
+
+async function verifyProductsExist(products) {
+  const productsIds = products.map((p) => p.productId);
+  const productsWithIds = await Product.findAll({ where: { id: productsIds } });
+  return productsIds.length === productsWithIds.length;
+}
 
 async function postOrder(body) {
   const { client, address, products } = body;
-  const postedClient = await Client.create(client);
-  const addressToPost = {
-    clientId: postedClient.id,
-    cep: address.cep,
-    street: address.street,
-    city: address.city,
-    neighborhood: address.neighborhood,
-    state: address.state,
-    number: address.number,
-    complement: address.complement,
-  };
-  await Address.create(addressToPost);
+  const productExist = await verifyProductsExist(products);
+  if (!productExist) throw new NotFoundError();
+
+  const postedClient = await Client.create({ ...client });
+  await Address.create({ clientId: postedClient.id, ...address });
   const postedOrder = await Order.create({ clientId: postedClient.id });
-  for (const product of products) {
-    const productToUpdate = await Product.findByPk(product.id);
+  for (let i = 0; i < products.length; i += 1) {
+    const productToUpdate = await Product.findByPk(products[i].productId);
     productToUpdate.stock -= 1;
     await productToUpdate.save();
     await OrdersProduct.create({
       orderId: postedOrder.id,
-      productId: product.id,
-      unitPrice: product.price,
+      productId: products[i].productId,
+      unitPrice: products[i].price,
     });
   }
 }

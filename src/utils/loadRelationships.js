@@ -11,5 +11,5 @@ Category.belongsToMany(Product, { through: CategoriesProduct });
 Product.belongsToMany(Category, { through: CategoriesProduct });
 Order.belongsToMany(Product, { through: OrdersProduct });
 Product.belongsToMany(Order, { through: OrdersProduct });
-Address.belongsTo(Client);
+Client.hasOne(Address);
 Product.hasMany(Photo);
