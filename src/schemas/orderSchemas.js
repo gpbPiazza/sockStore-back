@@ -21,6 +21,6 @@ const order = joi.object({
     quantity: joi.number().integer().required(),
     price: joi.number().required(),
   })).required(),
-});
+}).options({ allowUnknown: true });
 
 module.exports = { order };
